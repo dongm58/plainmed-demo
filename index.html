@@ -8,312 +8,261 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <style>
-/* Layout: control bar, summary strip, then source | rewrite (| second rewrite) reading columns that stack on phones. */
+/* Reading-first layout: a quiet control row, one line of context, one line of numbers,
+   then the abstract (muted, left) beside the rewrite (the main thing, right). */
 :root {
-  --ink: #17212b;
-  --muted: #5a6672;
-  --paper: #f6f7f8;
-  --panel: #ffffff;
-  --line: #d9dee3;
-  --accent: #1f5f8b;
-  --accent-soft: #e3eef6;
-  --flag: #b35c00;
-  --flag-bg: #fff1dc;
-  --ok: #2e7d4f;
-  --support-bg: #e6f2ec;
-  --font-ui: "Public Sans", "Segoe UI", system-ui, sans-serif;
-  --font-read: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --paper: #f5f7f6; --ink: #1c2630; --muted: #66727e; --rule: #dce1e4; --field: #ffffff;
+  --accent: #22677a; --flag: #a8520a; --flag-bg: #fcebd3; --ok: #2c7a55; --ok-bg: #e2f0e7;
+  --ui: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --read: "Source Serif 4", Georgia, serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --ink: #e4e9ee; --muted: #9aa6b2; --paper: #11161b; --panel: #182028; --line: #2b3640;
-    --accent: #7db7e0; --accent-soft: #1d3446; --flag: #f0a54a; --flag-bg: #3a2a14;
-    --ok: #6cc596; --support-bg: #17342a; color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --ink: #e4e9ee; --muted: #9aa6b2; --paper: #11161b; --panel: #182028; --line: #2b3640;
-  --accent: #7db7e0; --accent-soft: #1d3446; --flag: #f0a54a; --flag-bg: #3a2a14;
-  --ok: #6cc596; --support-bg: #17342a; color-scheme: dark;
+  :root { --paper: #141a1f; --ink: #e3e8ec; --muted: #9aa5af; --rule: #2a333b; --field: #1b232a;
+    --accent: #79b8c8; --flag: #f0a54a; --flag-bg: #3b2a14; --ok: #6cc596; --ok-bg: #173328; color-scheme: dark; }
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { margin: 0; }
-body { background: var(--paper); color: var(--ink); font-family: var(--font-ui); font-size: 16px; line-height: 1.5; }
-a { color: var(--accent); }
-header { padding: 28px 24px 16px; display: grid; gap: 8px; max-width: 1400px; margin: 0 auto; }
-h1 { font-size: 30px; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
-h1 span { color: var(--accent); }
-.tagline { margin: 0; color: var(--muted); max-width: 80ch; font-size: 17px; }
-.notice { margin: 4px 0 0; font-size: 13px; color: var(--flag); font-weight: 600; }
-main { max-width: 1400px; margin: 0 auto; padding: 0 24px 32px; display: grid; gap: 14px; }
-.controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: end; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
-.field { display: grid; gap: 3px; }
-.field label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-select, button { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 7px; padding: 6px 10px; }
-select { max-width: 360px; }
-button { cursor: pointer; }
-button:hover, select:hover { border-color: var(--accent); }
-button:focus-visible, select:focus-visible, .sent:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.check { display: flex; gap: 6px; align-items: center; font-size: 14px; padding-bottom: 6px; }
-.btns { display: flex; gap: 6px; }
-.case-note { background: var(--accent-soft); border-left: 4px solid var(--accent); border-radius: 10px; padding: 12px 16px; font-size: 15.5px; }
-.case-note b { color: var(--accent); }
-.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
-.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
-.tile .k { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
-.tile .v { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.tile .v small { font-size: 13px; font-weight: 500; color: var(--muted); }
-.cols { display: grid; grid-template-columns: repeat(var(--ncols, 2), minmax(0, 1fr)); gap: 14px; align-items: start; }
-.col { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; min-width: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
-.col h2 { font-size: 14px; margin: 0 0 2px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
-.col .sub { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
-.reading { font-family: var(--font-read); font-size: 18px; line-height: 1.7; max-width: 70ch; }
-.sent { border-radius: 4px; padding: 1px 2px; cursor: pointer; transition: background 0.15s; }
+body { background: var(--paper); color: var(--ink); font-family: var(--ui); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+header { padding: 36px 0 20px; }
+h1 { font-family: var(--read); font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0 0 6px; letter-spacing: -0.01em; }
+.tagline { margin: 0; color: var(--muted); font-size: 17px; max-width: 62ch; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; padding: 16px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+select, button { font: inherit; color: var(--ink); background: var(--field); border: 1px solid var(--rule); border-radius: 8px; padding: 8px 12px; }
+select { cursor: pointer; }
+#example { flex: 1 1 360px; max-width: 520px; min-width: 0; }
+select:hover, .toggle:hover { border-color: var(--accent); }
+.toggles { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
+.toggle { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid var(--rule); border-radius: 999px; font-size: 14.5px; cursor: pointer; user-select: none; background: var(--field); }
+.toggle input { margin: 0; accent-color: var(--accent); }
+.toggle:has(input:checked) { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.context { padding: 22px 0 6px; display: grid; gap: 14px; }
+.note { margin: 0; font-size: 17px; max-width: 90ch; }
+.note b { color: var(--accent); font-weight: 600; }
+.stats { display: flex; flex-wrap: wrap; gap: 10px 44px; align-items: baseline; }
+.stat { display: flex; align-items: baseline; gap: 8px; }
+.stat .n { font-size: 30px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.stat .n.warn { color: var(--flag); }
+.stat .l { color: var(--muted); font-size: 15px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 24px; font-size: 14px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.sw { width: 22px; height: 12px; border-radius: 3px; display: inline-block; }
+.sw.f { background: var(--flag-bg); box-shadow: inset 0 -2px 0 var(--flag); }
+.sw.s { background: var(--ok-bg); box-shadow: inset 0 -2px 0 var(--ok); }
+
+.cols { display: grid; grid-template-columns: repeat(var(--ncols, 2), minmax(0, 1fr)); gap: 0; padding: 18px 0 36px; }
+.col { padding: 0 28px; min-width: 0; }
+.col:first-child { padding-left: 0; }
+.col + .col { border-left: 1px solid var(--rule); }
+.col:last-child { padding-right: 0; }
+.col h2 { font-size: 17px; font-weight: 700; margin: 0; }
+.col .sub { color: var(--muted); font-size: 14px; margin: 2px 0 14px; }
+.reading { font-family: var(--read); font-size: 19px; line-height: 1.75; max-width: 66ch; }
+.reading.src { font-size: 17px; line-height: 1.7; color: var(--muted); }
+.reading.src .support { color: var(--ink); }
+.human { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--rule); }
+.human .reading { font-size: 17px; color: var(--muted); }
+.sent { border-radius: 3px; padding: 1px 1px; cursor: pointer; }
+.sent:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 .sent.flag { background: var(--flag-bg); box-shadow: inset 0 -2px 0 var(--flag); }
-.sent.sel { outline: 2px solid var(--accent); }
-.src-sent.support { background: var(--support-bg); box-shadow: inset 0 -2px 0 var(--ok); }
-.badge { display: inline-block; font-family: var(--font-ui); font-size: 11px; font-weight: 700; color: var(--flag); border: 1px solid var(--flag); border-radius: 999px; padding: 0 6px; margin-left: 4px; vertical-align: 2px; }
-.detail { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; font-size: 14px; display: grid; gap: 6px; }
-.bar { height: 8px; border-radius: 4px; background: var(--line); position: relative; overflow: hidden; max-width: 260px; }
+.sent.sel { outline: 2px solid var(--accent); outline-offset: 1px; }
+.support { background: var(--ok-bg); box-shadow: inset 0 -2px 0 var(--ok); border-radius: 3px; }
+.detail { margin-top: 18px; padding: 14px 16px; border-radius: 10px; background: var(--field); border: 1px solid var(--rule); display: grid; gap: 8px; font-size: 15.5px; }
+.detail .verdict { font-weight: 700; }
+.detail .verdict.bad { color: var(--flag); }
+.detail .verdict.good { color: var(--ok); }
+.meter { display: flex; align-items: center; gap: 12px; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 14.5px; }
+.bar { flex: 0 0 220px; height: 8px; border-radius: 4px; background: var(--rule); position: relative; overflow: hidden; }
 .bar i { position: absolute; inset: 0 auto 0 0; background: var(--ok); }
 .bar i.low { background: var(--flag); }
-.bar b { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--ink); }
-.muted { color: var(--muted); }
-.human { font-family: var(--font-read); font-size: 15.5px; line-height: 1.6; color: var(--muted); max-width: 68ch; }
-details.about { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font-size: 14px; }
-details.about summary { cursor: pointer; font-weight: 600; }
-details.about p, details.about li { max-width: 80ch; }
-footer { max-width: 1400px; margin: 0 auto; padding: 0 24px 28px; font-size: 13px; color: var(--muted); }
+.bar b { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--ink); }
 
-.featured h2, .results h2 { font-size: 13px; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
-.cases { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 10px; }
-.case-btn { text-align: left; display: grid; gap: 4px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); border-top: 4px solid var(--tag, var(--line)); }
-.case-btn .num { font-size: 12px; font-weight: 700; color: var(--tag, var(--muted)); text-transform: uppercase; letter-spacing: 0.04em; }
-.case-btn .t { font-weight: 700; font-size: 15px; line-height: 1.3; }
-.case-btn .topic { font-size: 13.5px; color: var(--muted); line-height: 1.3; }
-.case-btn.on { background: var(--accent-soft); border-color: var(--accent); border-top-color: var(--tag, var(--accent)); }
-.tag-good { --tag: var(--ok); } .tag-caught { --tag: var(--flag); } .tag-missed { --tag: #b3261e; } .tag-alarm { --tag: #6b5bb3; } .tag-base { --tag: var(--muted); }
-.legend { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; color: var(--muted); }
-.legend span { display: inline-flex; align-items: center; gap: 8px; }
-.sw { width: 26px; height: 14px; border-radius: 3px; display: inline-block; }
-.sw.f { background: var(--flag-bg); box-shadow: inset 0 -2px 0 var(--flag); }
-.sw.s { background: var(--support-bg); box-shadow: inset 0 -2px 0 var(--ok); }
-.results { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; overflow-x: auto; }
-.results .head { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-.seg button { border: 0; border-radius: 0; padding: 5px 12px; }
-.seg button.on { background: var(--accent); color: #fff; }
-table.res { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
-table.res th { text-align: left; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 2px solid var(--ink); padding: 8px 10px; }
-table.res td { padding: 9px 10px; border-bottom: 1px solid var(--line); font-size: 15.5px; }
-table.res tr.llm td { font-weight: 700; }
-table.res td.num, table.res th.num { text-align: right; }
-.defs { font-size: 13.5px; color: var(--muted); margin: 10px 0 0; max-width: 110ch; }
-@media (max-width: 860px) { .cols { grid-template-columns: 1fr; } header, main, footer { padding-left: 16px; padding-right: 16px; } .field { width: 100%; } select { width: 100%; max-width: 100%; } }
-select { min-width: 0; text-overflow: ellipsis; }
-.controls, .field { min-width: 0; }
-@media (prefers-reduced-motion: reduce) { .sent { transition: none; } }
+.results { padding: 8px 0 36px; border-top: 1px solid var(--rule); }
+.results h2 { font-size: 20px; margin: 24px 0 4px; }
+.results .sub { color: var(--muted); margin: 0 0 14px; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th { text-align: right; font-size: 14px; font-weight: 600; color: var(--muted); padding: 8px 12px; border-bottom: 2px solid var(--ink); }
+td { text-align: right; padding: 11px 12px; border-bottom: 1px solid var(--rule); font-size: 16px; }
+th:first-child, td:first-child { text-align: left; padding-left: 0; }
+tr.llm td { font-weight: 700; }
+.defs { color: var(--muted); font-size: 14.5px; max-width: 80ch; margin: 14px 0 0; display: grid; gap: 4px; }
+
+footer { border-top: 1px solid var(--rule); padding: 20px 0 40px; color: var(--muted); font-size: 14px; display: grid; gap: 10px; }
+details summary { cursor: pointer; color: var(--ink); font-weight: 600; }
+details ul { margin: 10px 0 0; padding-left: 20px; max-width: 80ch; display: grid; gap: 6px; }
+
+@media (max-width: 900px) {
+  .wrap { padding: 0 18px; }
+  .cols { grid-template-columns: 1fr; gap: 28px; }
+  .col, .col:first-child, .col:last-child { padding: 0; }
+  .col + .col { border-left: 0; border-top: 1px solid var(--rule); padding-top: 24px; }
+  .toggles { margin-left: 0; }
+  .bar { flex-basis: 140px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
 </style>
 </head>
 <body>
+<div class="wrap">
 <header>
-  <h1>Plain<span>Med</span>: plain-language medical evidence, with checks</h1>
-  <p class="tagline">Rewrites the results of Cochrane systematic reviews into plain English, then marks the sentences of its own rewrite that a reader should check against the original.</p>
-  <p class="notice">Reading aid only, not medical advice. Always read the original review.</p>
+  <h1>PlainMed</h1>
+  <p class="tagline">Medical research rewritten in plain English, with every sentence checked against the original.</p>
 </header>
-<main>
-  <section class="featured" aria-label="Featured cases">
-    <h2>Featured cases</h2>
-    <div class="cases" id="cases"></div>
-  </section>
-  <section class="controls" aria-label="Choose what to show">
-    <div class="field"><label for="example">Or browse any abstract</label><select id="example"></select></div>
-    <div class="field"><label for="sysA">Rewrite by</label><select id="sysA"></select></div>
-    <div class="check"><input type="checkbox" id="compare"><label for="compare">Compare with</label></div>
-    <div class="field" id="sysBwrap" hidden><label for="sysB">Second system</label><select id="sysB"></select></div>
-    <div class="check"><input type="checkbox" id="showHuman"><label for="showHuman">Show the human summary</label></div>
-    <div class="btns"><button id="prev" type="button">Previous</button><button id="next" type="button">Next</button><button id="random" type="button">Random</button></div>
-    <div class="check"><input type="checkbox" id="showTable"><label for="showTable">Show results table</label></div>
-  </section>
-  <div class="case-note" id="caseNote" hidden></div>
-  <section class="summary" id="summary" aria-label="Summary for this abstract"></section>
-  <div class="legend"><span><i class="sw f"></i>Flagged: the checker says check this sentence</span><span><i class="sw s"></i>Where the abstract supports the sentence you clicked</span></div>
-  <section class="cols" id="cols"></section>
-  <section class="results" id="results" hidden aria-label="Results table"></section>
-  <details class="about">
-    <summary>How this works</summary>
-    <ul id="about"></ul>
-  </details>
-</main>
-<footer id="footer">Loading…</footer>
+
+<section class="controls" aria-label="Choose what to show">
+  <select id="example" aria-label="Abstract"></select>
+  <select id="sysA" aria-label="Rewrite by"></select>
+  <select id="sysB" aria-label="Second rewrite" hidden></select>
+  <div class="toggles">
+    <label class="toggle"><input type="checkbox" id="compare">Compare two</label>
+    <label class="toggle"><input type="checkbox" id="showHuman">Human summary</label>
+    <label class="toggle"><input type="checkbox" id="showTable">Results table</label>
+  </div>
+</section>
+
+<section class="context">
+  <p class="note" id="caseNote" hidden></p>
+  <div class="stats" id="stats"></div>
+  <div class="legend"><span><i class="sw f"></i>Flagged: check this sentence</span><span><i class="sw s"></i>Where the abstract supports the sentence you clicked</span></div>
+</section>
+
+<section class="cols" id="cols"></section>
+<section class="results" id="results" hidden aria-label="Results table"></section>
+
+<footer>
+  <details><summary>How it works</summary><ul id="about"></ul></details>
+  <div>Reading aid only, not medical advice. <span id="credit">Loading…</span></div>
+</footer>
+</div>
+
 <script>
 let DATA = null;
-const state = { i: 0, sysA: null, sysB: null, compare: false, human: false, sel: null, table: false, tableSplit: "test" };
-const TAGS = ["tag-good", "tag-caught", "tag-caught", "tag-missed", "tag-alarm", "tag-alarm", "tag-base"];
+const state = { i: 0, sysA: null, sysB: null, compare: false, human: false, table: false, sel: null };
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const caseFor = ex => DATA.cases.find(c => c.id === ex.id);
 
-function label(ex, named = false) {
-  const caseInfo = named && DATA.cases.find(c => c.id === ex.id);
-  if (caseInfo && caseInfo.short) return `${caseInfo.short} · ${caseInfo.topic}`;
-  const first = ex.source[0] || "";
-  return `${ex.id.replace("cochrane-", "")}: ${first.slice(0, 60)}${first.length > 60 ? "…" : ""}`;
-}
-
-function buildCases() {
-  $("cases").innerHTML = DATA.cases.map((c, k) => {
-    const i = DATA.examples.findIndex(e => e.id === c.id);
-    if (i < 0) return "";
-    return `<button type="button" class="case-btn ${TAGS[k] || ""}" data-i="${i}"><span class="num">Case ${k + 1}</span><span class="t">${esc(c.short || c.title)}</span><span class="topic">${esc(c.topic || "")}</span></button>`;
-  }).join("");
-}
-
-function renderTable() {
-  const el = $("results");
-  el.hidden = !state.table;
-  if (!state.table || !DATA.results) return;
-  const rows = DATA.results[state.tableSplit] || [];
-  const n = rows.length ? rows[0].n : 0;
-  const cell = v => (v === null || v === undefined ? "—" : Number(v).toFixed(1));
-  el.innerHTML = `<div class="head"><h2>Results over all ${n} ${state.tableSplit === "test" ? "test" : "validation"} abstracts (averages)</h2>
-    <div class="seg"><button type="button" data-split="test" class="${state.tableSplit === "test" ? "on" : ""}">Test set</button><button type="button" data-split="val" class="${state.tableSplit === "val" ? "on" : ""}">Validation set</button></div></div>
-    <table class="res"><thead><tr><th>System</th><th class="num">Grade level</th><th class="num">Words</th><th class="num">Digits per 100 words</th><th class="num">SARI</th><th class="num">BERTScore</th><th class="num">Sentences flagged</th></tr></thead><tbody>
-    ${rows.map(r => `<tr class="${r.key.startsWith("llm") ? "llm" : ""}"><td>${esc(r.name)}</td><td class="num">${cell(r.fkgl)}</td><td class="num">${r.words === null ? "—" : Math.round(r.words)}</td><td class="num">${cell(r.digits)}</td><td class="num">${cell(r.sari)}</td><td class="num">${cell(r.bertscore)}</td><td class="num">${r.flagged === null ? "—" : r.flagged + "%"}</td></tr>`).join("")}
-    </tbody></table>
-    <p class="defs"><b>Grade level:</b> Flesch–Kincaid, lower is easier. <b>SARI:</b> word by word, did the rewrite keep, add and delete the same words as the human summary? <b>BERTScore:</b> a language model matches each word to the closest-meaning word in the human summary (rescaled). <b>Sentences flagged:</b> share of sentences the checker marks as not supported by the abstract. The original abstract is not checked against itself.</p>`;
-}
-
+// Featured cases first, by name; then the test set. Validation abstracts are not listed.
 function buildPickers() {
   const featured = DATA.cases.map(c => DATA.examples.findIndex(e => e.id === c.id)).filter(i => i >= 0);
-  const opts = [];
-  if (featured.length) {
-    opts.push('<optgroup label="★ Featured cases">' + featured.map(i => `<option value="${i}">${esc(label(DATA.examples[i], true))}</option>`).join("") + "</optgroup>");
-  }
-  for (const split of ["val", "test"]) {
-    const idx = DATA.examples.map((e, i) => [e, i]).filter(([e]) => e.split === split);
-    if (idx.length) opts.push(`<optgroup label="${split === "val" ? "Validation set" : "Test set"} (${idx.length})">` + idx.map(([e, i]) => `<option value="${i}">${esc(label(e))}</option>`).join("") + "</optgroup>");
-  }
-  $("example").innerHTML = opts.join("");
-  const systems = Object.entries(DATA.systems);
-  const sysOpts = systems.map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("");
-  $("sysA").innerHTML = sysOpts;
-  $("sysB").innerHTML = sysOpts;
-  state.sysA = systems[0][0];
-  state.sysB = (systems[1] || systems[0])[0];
-  $("sysA").value = state.sysA;
-  $("sysB").value = state.sysB;
-  state.i = featured.length ? featured[0] : 0;
+  const test = DATA.examples.map((e, i) => [e, i]).filter(([e]) => e.split === "test");
+  const caseOpt = i => { const c = caseFor(DATA.examples[i]); return `<option value="${i}">${esc(c.short)}: ${esc(c.topic)}</option>`; };
+  const testOpt = ([e, i]) => { const first = e.source[0] || ""; return `<option value="${i}">${esc(e.id.replace("cochrane-test-", "#"))}  ${esc(first.slice(0, 70))}${first.length > 70 ? "…" : ""}</option>`; };
+  $("example").innerHTML = `<optgroup label="Featured cases">${featured.map(caseOpt).join("")}</optgroup>` +
+    `<optgroup label="All test abstracts (${test.length})">${test.map(testOpt).join("")}</optgroup>`;
+  const sysOpts = Object.entries(DATA.systems).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("");
+  $("sysA").innerHTML = sysOpts; $("sysB").innerHTML = sysOpts;
+  const keys = Object.keys(DATA.systems);
+  state.sysA = keys[0]; state.sysB = keys[1] || keys[0];
+  $("sysA").value = state.sysA; $("sysB").value = state.sysB;
+  state.i = featured.length ? featured[0] : test[0][1];
   $("example").value = String(state.i);
+}
+
+function applyCaseSystem() {
+  const ex = DATA.examples[state.i], c = caseFor(ex);
+  if (c && c.system && ex.systems[c.system]) { state.sysA = c.system; $("sysA").value = c.system; }
 }
 
 function flagReason(s) {
   const parts = [];
-  if (s.nums && s.nums.length) parts.push(`has ${s.nums.length === 1 ? "a number" : "numbers"} not in the original (${s.nums.map(n => Number.isInteger(n) ? n : n.toString()).join(", ")})`);
-  if (s.low) parts.push(`weakly supported by the original (support score ${s.score.toFixed(2)}, below ${DATA.threshold})`);
-  return parts.join(" and ");
+  if (s.nums && s.nums.length) parts.push(`${s.nums.join(", ")} ${s.nums.length === 1 ? "is" : "are"} not in the abstract`);
+  if (s.low) parts.push(`the abstract doesn’t back it up`);
+  return parts.join(", and ");
 }
 
-function renderOutput(ex, sysKey, colIndex) {
+function renderOutput(ex, sysKey, col) {
   const out = ex.systems[sysKey];
-  if (!out) return `<div class="col"><h2>${esc(DATA.systems[sysKey])}</h2><p class="muted">No output for this abstract yet.</p></div>`;
-  const checked = out.sentences.some(s => s.checked);
+  const name = esc(DATA.systems[sysKey]);
+  if (!out) return `<div class="col"><h2>${name}</h2><p class="sub">No rewrite for this abstract.</p></div>`;
   const flagged = out.sentences.filter(s => s.flag).length;
   const sents = out.sentences.map((s, j) => {
-    const sel = state.sel && state.sel.col === colIndex && state.sel.j === j ? " sel" : "";
-    const flag = s.flag ? " flag" : "";
-    return `<span class="sent${flag}${sel}" tabindex="0" role="button" data-col="${colIndex}" data-j="${j}">${esc(s.t)}${s.flag ? '<span class="badge">check this</span>' : ""}</span>`;
+    const cls = ["sent", s.flag ? "flag" : "", state.sel && state.sel.col === col && state.sel.j === j ? "sel" : ""].join(" ");
+    return `<span class="${cls}" tabindex="0" role="button" data-col="${col}" data-j="${j}">${esc(s.t)}</span>`;
   }).join(" ");
   let detail = "";
-  if (state.sel && state.sel.col === colIndex) {
+  if (state.sel && state.sel.col === col) {
     const s = out.sentences[state.sel.j];
     if (s && s.checked) {
-      const pct = Math.round(s.score * 100);
-      detail = `<div class="detail" aria-live="polite"><div><b>${s.flag ? "Check this sentence." : "This sentence looks supported."}</b> ${s.flag ? "It " + esc(flagReason(s)) + "." : ""}</div>
-        <div class="muted">Support score from the NLI model: ${s.score.toFixed(2)} (flagged below ${DATA.threshold})</div>
-        <div class="bar" aria-hidden="true"><i class="${s.low ? "low" : ""}" style="width:${pct}%"></i><b style="left:${DATA.threshold * 100}%"></b></div>
-        <div class="muted">The best-matching part of the original is highlighted in green on the left.</div></div>`;
-    } else if (s) {
-      detail = `<div class="detail muted">The checker has not been run on this output yet.</div>`;
+      detail = `<div class="detail" aria-live="polite">
+        <div class="verdict ${s.flag ? "bad" : "good"}">${s.flag ? "Check this: " + esc(flagReason(s)) + "." : "Supported by the abstract."}</div>
+        <div class="meter"><span class="bar" aria-hidden="true"><i class="${s.low ? "low" : ""}" style="width:${Math.round(s.score * 100)}%"></i><b style="left:${DATA.threshold * 100}%"></b></span>
+        Support score ${s.score.toFixed(2)} (flagged below ${DATA.threshold})</div></div>`;
     }
   }
-  const status = checked ? `${flagged} of ${out.sentences.length} sentences flagged · grade ${out.fkgl} · ${out.words} words` : `${out.sentences.length} sentences · grade ${out.fkgl} · ${out.words} words · checker not run yet`;
-  return `<div class="col"><h2>${esc(DATA.systems[sysKey])}</h2><p class="sub">${status}. Click a sentence to see where the original supports it.</p><div class="reading">${sents}</div>${detail}</div>`;
+  return `<div class="col"><h2>${name}</h2><p class="sub">${flagged} of ${out.sentences.length} sentences flagged. Click a sentence to see its support.</p><div class="reading">${sents}</div>${detail}</div>`;
 }
 
 function render() {
-  const ex = DATA.examples[state.i];
-  document.querySelectorAll(".case-btn").forEach(b => b.classList.toggle("on", +b.dataset.i === state.i));
-  const caseInfo = DATA.cases.find(c => c.id === ex.id);
-  $("caseNote").hidden = !caseInfo;
-  if (caseInfo) $("caseNote").innerHTML = `<b>${esc(caseInfo.title)}.</b> ${esc(caseInfo.note)}`;
-
-  const a = ex.systems[state.sysA];
-  const tiles = [
-    ["Grade level", a ? `${ex.source_fkgl} → ${a.fkgl} <small>original → rewrite</small>` : `${ex.source_fkgl}`],
-    ["Length", a ? `${ex.source_words} → ${a.words} <small>words</small>` : `${ex.source_words}`],
-    ["Flagged", a && a.sentences.some(s => s.checked) ? `${a.sentences.filter(s => s.flag).length} <small>of ${a.sentences.length} sentences</small>` : `<small>checker not run yet</small>`],
-    ["Human summary", `grade ${ex.reference_fkgl} <small>for comparison</small>`],
-  ];
-  $("summary").innerHTML = tiles.map(([k, v]) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div></div>`).join("");
+  const ex = DATA.examples[state.i], c = caseFor(ex), a = ex.systems[state.sysA];
+  $("caseNote").hidden = !c;
+  if (c) $("caseNote").innerHTML = `<b>${esc(c.short)}.</b> ${esc(c.note)}`;
+  const flagged = a ? a.sentences.filter(s => s.flag).length : 0;
+  $("stats").innerHTML = a ? [
+    `<div class="stat"><span class="n">${ex.source_fkgl} → ${a.fkgl}</span><span class="l">grade level</span></div>`,
+    `<div class="stat"><span class="n">${ex.source_words} → ${a.words}</span><span class="l">words</span></div>`,
+    `<div class="stat"><span class="n${flagged ? " warn" : ""}">${flagged} of ${a.sentences.length}</span><span class="l">sentences flagged</span></div>`,
+  ].join("") : "";
 
   let support = new Set();
   if (state.sel) {
-    const sys = state.sel.col === 0 ? state.sysA : state.sysB;
-    const s = ex.systems[sys] && ex.systems[sys].sentences[state.sel.j];
+    const s = (ex.systems[state.sel.col === 0 ? state.sysA : state.sysB] || { sentences: [] }).sentences[state.sel.j];
     if (s && s.checked && s.src !== null) for (let k = 0; k < (s.span || 1); k++) support.add(s.src + k);
   }
-  const src = ex.source.map((s, k) => `<span class="src-sent${support.has(k) ? " support" : ""}" id="src-${k}">${esc(s)}</span>`).join(" ");
-  const human = state.human ? `<h2 style="margin-top:14px">Human plain-language summary</h2><p class="human">${esc(ex.reference)}</p>` : "";
-  const cols = [`<div class="col"><h2>Original abstract (results)</h2><p class="sub">${ex.id} · ${ex.split === "val" ? "validation" : "test"} set · grade ${ex.source_fkgl}</p><div class="reading">${src}</div>${human}</div>`,
+  const src = ex.source.map((s, k) => `<span class="${support.has(k) ? "support" : ""}" id="src-${k}">${esc(s)}</span>`).join(" ");
+  const human = state.human ? `<div class="human"><h2>Human-written plain summary</h2><p class="sub">Grade ${ex.reference_fkgl}</p><div class="reading src">${esc(ex.reference)}</div></div>` : "";
+  const cols = [`<div class="col"><h2>Original abstract</h2><p class="sub">Grade ${ex.source_fkgl}, ${ex.source_words} words</p><div class="reading src">${src}</div>${human}</div>`,
                 renderOutput(ex, state.sysA, 0)];
   if (state.compare) cols.push(renderOutput(ex, state.sysB, 1));
   $("cols").style.setProperty("--ncols", cols.length);
   $("cols").innerHTML = cols.join("");
-  const first = support.size ? document.getElementById(`src-${Math.min(...support)}`) : null;
-  if (first && window.innerWidth > 860) first.scrollIntoView({ block: "nearest" });
+  const first = support.size ? $(`src-${Math.min(...support)}`) : null;
+  if (first && window.innerWidth > 900) first.scrollIntoView({ block: "nearest" });
 }
 
-function applyCaseSystem() {
-  const ex = DATA.examples[state.i];
-  const c = DATA.cases.find(x => x.id === ex.id);
-  if (c && c.system && ex.systems[c.system]) { state.sysA = c.system; $("sysA").value = c.system; }
+function renderTable() {
+  $("results").hidden = !state.table;
+  if (!state.table || !DATA.results || !DATA.results.test) return;
+  const rows = DATA.results.test, f = v => (v === null || v === undefined ? "—" : Number(v).toFixed(1));
+  $("results").innerHTML = `<h2>Results on all ${rows[0].n} test abstracts</h2><p class="sub">Averages per abstract.</p>
+    <table><thead><tr><th>System</th><th>Grade level</th><th>Words</th><th>SARI</th><th>BERTScore</th><th>Sentences flagged</th></tr></thead><tbody>
+    ${rows.map(r => `<tr class="${r.key.startsWith("llm") ? "llm" : ""}"><td>${esc(r.name)}</td><td>${f(r.fkgl)}</td><td>${r.words === null ? "—" : Math.round(r.words)}</td><td>${f(r.sari)}</td><td>${f(r.bertscore)}</td><td>${r.flagged === null ? "—" : r.flagged + "%"}</td></tr>`).join("")}
+    </tbody></table>
+    <div class="defs"><div><b>Grade level:</b> lower is easier to read.</div><div><b>SARI:</b> did the rewrite keep, add and delete the same words as the human summary?</div><div><b>BERTScore:</b> how close the rewrite’s meaning is to the human summary.</div><div><b>Sentences flagged:</b> share of sentences the abstract doesn’t support. The original isn’t checked against itself.</div></div>`;
 }
 
 function bind() {
   $("example").addEventListener("change", e => { state.i = +e.target.value; state.sel = null; applyCaseSystem(); render(); });
   $("sysA").addEventListener("change", e => { state.sysA = e.target.value; state.sel = null; render(); });
   $("sysB").addEventListener("change", e => { state.sysB = e.target.value; state.sel = null; render(); });
-  $("compare").addEventListener("change", e => { state.compare = e.target.checked; $("sysBwrap").hidden = !state.compare; state.sel = null; render(); });
+  $("compare").addEventListener("change", e => { state.compare = e.target.checked; $("sysB").hidden = !state.compare; state.sel = null; render(); });
   $("showHuman").addEventListener("change", e => { state.human = e.target.checked; render(); });
   $("showTable").addEventListener("change", e => { state.table = e.target.checked; renderTable(); if (state.table) $("results").scrollIntoView({ behavior: "smooth", block: "start" }); });
-  $("results").addEventListener("click", e => { const b = e.target.closest("[data-split]"); if (!b) return; state.tableSplit = b.dataset.split; renderTable(); });
-  $("cases").addEventListener("click", e => { const b = e.target.closest(".case-btn"); if (!b) return; state.i = +b.dataset.i; $("example").value = b.dataset.i; state.sel = null; applyCaseSystem(); render(); });
-  const go = d => { const opts = [...$("example").options]; const pos = opts.findIndex(o => +o.value === state.i); const next = opts[(pos + d + opts.length) % opts.length]; state.i = +next.value; $("example").value = next.value; state.sel = null; applyCaseSystem(); render(); };
-  $("prev").addEventListener("click", () => go(-1));
-  $("next").addEventListener("click", () => go(1));
-  $("random").addEventListener("click", () => { state.i = Math.floor(Math.random() * DATA.examples.length); $("example").value = String(state.i); state.sel = null; render(); });
   const pick = t => { const el = t.closest(".sent"); if (!el) return; const sel = { col: +el.dataset.col, j: +el.dataset.j }; state.sel = state.sel && state.sel.col === sel.col && state.sel.j === sel.j ? null : sel; render(); };
   $("cols").addEventListener("click", e => pick(e.target));
   $("cols").addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(e.target); } });
 }
 
 function about() {
-  const items = [
-    `<b>Rewrites:</b> ${esc(DATA.llm_model)} prompted zero-shot and with 3 training examples (greedy decoding), plus an extractive baseline that keeps the 3 source sentences with the fewest numbers.`,
-    `<b>Checker:</b> every rewrite sentence is compared with each original sentence and each pair of neighboring sentences by an NLI model (${esc(DATA.nli_model)}). The highest entailment probability is its support score; a sentence is flagged if the score is below ${DATA.threshold ?? "the threshold"} or if it contains a number the original does not.`,
-    `<b>Grade level:</b> Flesch–Kincaid grade, computed with numbers masked so decimals are not counted as sentence ends.`,
-    `<b>Data:</b> Cochrane paragraph-level simplification dataset (Devaraj et al., 2021). Validation examples were used to choose the prompt; test examples were run once, after all choices were fixed.`,
-    `<b>Limits:</b> the checker can miss errors and can flag correct sentences; an unflagged sentence is not guaranteed to be right.`,
-  ];
-  $("about").innerHTML = items.map(x => `<li>${x}</li>`).join("");
-  $("footer").innerHTML = `PlainMed · Michael Dong · COSC 72/272 final project, Dartmouth, Fall 2026 · ${DATA.examples.length} abstracts`;
+  $("about").innerHTML = [
+    `<b>Rewrites:</b> ${esc(DATA.llm_model)}, given no examples or 3 examples, plus a simple baseline that keeps the 3 sentences with the fewest numbers.`,
+    `<b>Checker:</b> an NLI model (${esc(DATA.nli_model)}) scores how well each abstract sentence, and each pair of neighboring sentences, supports a rewrite sentence. The best score is its support score. A sentence is flagged below ${DATA.threshold}, or if it has a number the abstract doesn’t.`,
+    `<b>Grade level:</b> Flesch–Kincaid, with numbers masked so decimals aren’t counted as sentence ends.`,
+    `<b>Data:</b> Cochrane abstracts and their plain-language summaries (Devaraj et al., 2021).`,
+    `<b>Limits:</b> the checker can miss errors and can flag correct sentences. An unflagged sentence isn’t guaranteed to be right.`,
+  ].map(x => `<li>${x}</li>`).join("");
+  $("credit").textContent = "Michael Dong, COSC 72/272 final project, Dartmouth, Fall 2026.";
 }
 
 fetch("data.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
-  DATA = d; buildCases(); buildPickers(); bind(); about(); applyCaseSystem(); render(); renderTable();
-}).catch(err => { $("footer").textContent = "Could not load the demo data (data.json): " + err.message; });
+  DATA = d; buildPickers(); bind(); about(); applyCaseSystem(); render();
+}).catch(err => { $("credit").textContent = "Couldn’t load the demo data (data.json): " + err.message; });
 </script>
 </body>
 </html>
