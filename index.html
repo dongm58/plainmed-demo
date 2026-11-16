@@ -45,8 +45,8 @@ select:hover, .toggle:hover { border-color: var(--accent); }
 .context { padding: 22px 0 6px; display: grid; gap: 14px; }
 .note { margin: 0; font-size: 17px; max-width: 90ch; }
 .note b { color: var(--accent); font-weight: 600; }
-.stats { display: flex; flex-wrap: wrap; gap: 10px 44px; align-items: baseline; }
-.stat { display: flex; align-items: baseline; gap: 8px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.stat { display: flex; align-items: baseline; gap: 10px; background: var(--field); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 20px; }
 .stat .n { font-size: 30px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
 .stat .n.warn { color: var(--flag); }
 .stat .l { color: var(--muted); font-size: 15px; }
