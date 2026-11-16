@@ -218,13 +218,19 @@ function render() {
   if (first && window.innerWidth > 860) first.scrollIntoView({ block: "nearest" });
 }
 
+function applyCaseSystem() {
+  const ex = DATA.examples[state.i];
+  const c = DATA.cases.find(x => x.id === ex.id);
+  if (c && c.system && ex.systems[c.system]) { state.sysA = c.system; $("sysA").value = c.system; }
+}
+
 function bind() {
-  $("example").addEventListener("change", e => { state.i = +e.target.value; state.sel = null; render(); });
+  $("example").addEventListener("change", e => { state.i = +e.target.value; state.sel = null; applyCaseSystem(); render(); });
   $("sysA").addEventListener("change", e => { state.sysA = e.target.value; state.sel = null; render(); });
   $("sysB").addEventListener("change", e => { state.sysB = e.target.value; state.sel = null; render(); });
   $("compare").addEventListener("change", e => { state.compare = e.target.checked; $("sysBwrap").hidden = !state.compare; state.sel = null; render(); });
   $("showHuman").addEventListener("change", e => { state.human = e.target.checked; render(); });
-  const go = d => { const opts = [...$("example").options]; const pos = opts.findIndex(o => +o.value === state.i); const next = opts[(pos + d + opts.length) % opts.length]; state.i = +next.value; $("example").value = next.value; state.sel = null; render(); };
+  const go = d => { const opts = [...$("example").options]; const pos = opts.findIndex(o => +o.value === state.i); const next = opts[(pos + d + opts.length) % opts.length]; state.i = +next.value; $("example").value = next.value; state.sel = null; applyCaseSystem(); render(); };
   $("prev").addEventListener("click", () => go(-1));
   $("next").addEventListener("click", () => go(1));
   $("random").addEventListener("click", () => { state.i = Math.floor(Math.random() * DATA.examples.length); $("example").value = String(state.i); state.sel = null; render(); });
@@ -246,7 +252,7 @@ function about() {
 }
 
 fetch("data.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
-  DATA = d; buildPickers(); bind(); about(); render();
+  DATA = d; buildPickers(); bind(); about(); applyCaseSystem(); render();
 }).catch(err => { $("footer").textContent = "Could not load the demo data (data.json): " + err.message; });
 </script>
 </body>
