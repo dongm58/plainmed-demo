@@ -40,12 +40,12 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { margin: 0; }
-body { background: var(--paper); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.5; }
+body { background: var(--paper); color: var(--ink); font-family: var(--font-ui); font-size: 16px; line-height: 1.5; }
 a { color: var(--accent); }
-header { padding: 20px 24px 12px; display: grid; gap: 6px; max-width: 1400px; margin: 0 auto; }
-h1 { font-size: 22px; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+header { padding: 28px 24px 16px; display: grid; gap: 8px; max-width: 1400px; margin: 0 auto; }
+h1 { font-size: 30px; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
 h1 span { color: var(--accent); }
-.tagline { margin: 0; color: var(--muted); max-width: 70ch; }
+.tagline { margin: 0; color: var(--muted); max-width: 80ch; font-size: 17px; }
 .notice { margin: 4px 0 0; font-size: 13px; color: var(--flag); font-weight: 600; }
 main { max-width: 1400px; margin: 0 auto; padding: 0 24px 32px; display: grid; gap: 14px; }
 .controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: end; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
@@ -58,18 +58,18 @@ button:hover, select:hover { border-color: var(--accent); }
 button:focus-visible, select:focus-visible, .sent:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .check { display: flex; gap: 6px; align-items: center; font-size: 14px; padding-bottom: 6px; }
 .btns { display: flex; gap: 6px; }
-.case-note { background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; font-size: 14px; }
+.case-note { background: var(--accent-soft); border-left: 4px solid var(--accent); border-radius: 10px; padding: 12px 16px; font-size: 15.5px; }
 .case-note b { color: var(--accent); }
 .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
 .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
 .tile .k { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
-.tile .v { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.tile .v { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .tile .v small { font-size: 13px; font-weight: 500; color: var(--muted); }
 .cols { display: grid; grid-template-columns: repeat(var(--ncols, 2), minmax(0, 1fr)); gap: 14px; align-items: start; }
-.col { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+.col { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; min-width: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
 .col h2 { font-size: 14px; margin: 0 0 2px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
 .col .sub { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
-.reading { font-family: var(--font-read); font-size: 16.5px; line-height: 1.65; max-width: 68ch; }
+.reading { font-family: var(--font-read); font-size: 18px; line-height: 1.7; max-width: 70ch; }
 .sent { border-radius: 4px; padding: 1px 2px; cursor: pointer; transition: background 0.15s; }
 .sent.flag { background: var(--flag-bg); box-shadow: inset 0 -2px 0 var(--flag); }
 .sent.sel { outline: 2px solid var(--accent); }
@@ -86,6 +86,31 @@ details.about { background: var(--panel); border: 1px solid var(--line); border-
 details.about summary { cursor: pointer; font-weight: 600; }
 details.about p, details.about li { max-width: 80ch; }
 footer { max-width: 1400px; margin: 0 auto; padding: 0 24px 28px; font-size: 13px; color: var(--muted); }
+
+.featured h2, .results h2 { font-size: 13px; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.cases { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 10px; }
+.case-btn { text-align: left; display: grid; gap: 4px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); border-top: 4px solid var(--tag, var(--line)); }
+.case-btn .num { font-size: 12px; font-weight: 700; color: var(--tag, var(--muted)); text-transform: uppercase; letter-spacing: 0.04em; }
+.case-btn .t { font-weight: 700; font-size: 15px; line-height: 1.3; }
+.case-btn .topic { font-size: 13.5px; color: var(--muted); line-height: 1.3; }
+.case-btn.on { background: var(--accent-soft); border-color: var(--accent); border-top-color: var(--tag, var(--accent)); }
+.tag-good { --tag: var(--ok); } .tag-caught { --tag: var(--flag); } .tag-missed { --tag: #b3261e; } .tag-alarm { --tag: #6b5bb3; } .tag-base { --tag: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.sw { width: 26px; height: 14px; border-radius: 3px; display: inline-block; }
+.sw.f { background: var(--flag-bg); box-shadow: inset 0 -2px 0 var(--flag); }
+.sw.s { background: var(--support-bg); box-shadow: inset 0 -2px 0 var(--ok); }
+.results { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; overflow-x: auto; }
+.results .head { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; padding: 5px 12px; }
+.seg button.on { background: var(--accent); color: #fff; }
+table.res { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+table.res th { text-align: left; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 2px solid var(--ink); padding: 8px 10px; }
+table.res td { padding: 9px 10px; border-bottom: 1px solid var(--line); font-size: 15.5px; }
+table.res tr.llm td { font-weight: 700; }
+table.res td.num, table.res th.num { text-align: right; }
+.defs { font-size: 13.5px; color: var(--muted); margin: 10px 0 0; max-width: 110ch; }
 @media (max-width: 860px) { .cols { grid-template-columns: 1fr; } header, main, footer { padding-left: 16px; padding-right: 16px; } .field { width: 100%; } select { width: 100%; max-width: 100%; } }
 select { min-width: 0; text-overflow: ellipsis; }
 .controls, .field { min-width: 0; }
@@ -99,17 +124,24 @@ select { min-width: 0; text-overflow: ellipsis; }
   <p class="notice">Reading aid only, not medical advice. Always read the original review.</p>
 </header>
 <main>
+  <section class="featured" aria-label="Featured cases">
+    <h2>Featured cases</h2>
+    <div class="cases" id="cases"></div>
+  </section>
   <section class="controls" aria-label="Choose what to show">
-    <div class="field"><label for="example">Abstract</label><select id="example"></select></div>
+    <div class="field"><label for="example">Or browse any abstract</label><select id="example"></select></div>
     <div class="field"><label for="sysA">Rewrite by</label><select id="sysA"></select></div>
     <div class="check"><input type="checkbox" id="compare"><label for="compare">Compare with</label></div>
     <div class="field" id="sysBwrap" hidden><label for="sysB">Second system</label><select id="sysB"></select></div>
     <div class="check"><input type="checkbox" id="showHuman"><label for="showHuman">Show the human summary</label></div>
     <div class="btns"><button id="prev" type="button">Previous</button><button id="next" type="button">Next</button><button id="random" type="button">Random</button></div>
+    <div class="check"><input type="checkbox" id="showTable"><label for="showTable">Show results table</label></div>
   </section>
   <div class="case-note" id="caseNote" hidden></div>
   <section class="summary" id="summary" aria-label="Summary for this abstract"></section>
+  <div class="legend"><span><i class="sw f"></i>Flagged: the checker says check this sentence</span><span><i class="sw s"></i>Where the abstract supports the sentence you clicked</span></div>
   <section class="cols" id="cols"></section>
+  <section class="results" id="results" hidden aria-label="Results table"></section>
   <details class="about">
     <summary>How this works</summary>
     <ul id="about"></ul>
@@ -118,22 +150,46 @@ select { min-width: 0; text-overflow: ellipsis; }
 <footer id="footer">Loading…</footer>
 <script>
 let DATA = null;
-const state = { i: 0, sysA: null, sysB: null, compare: false, human: false, sel: null };
+const state = { i: 0, sysA: null, sysB: null, compare: false, human: false, sel: null, table: false, tableSplit: "test" };
+const TAGS = ["tag-good", "tag-caught", "tag-caught", "tag-missed", "tag-alarm", "tag-alarm", "tag-base"];
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-function label(ex) {
+function label(ex, named = false) {
+  const caseInfo = named && DATA.cases.find(c => c.id === ex.id);
+  if (caseInfo && caseInfo.short) return `${caseInfo.short} · ${caseInfo.topic}`;
   const first = ex.source[0] || "";
-  const caseInfo = DATA.cases.find(c => c.id === ex.id);
-  const prefix = caseInfo ? "★ " : "";
-  return `${prefix}${ex.id.replace("cochrane-", "")}: ${first.slice(0, 60)}${first.length > 60 ? "…" : ""}`;
+  return `${ex.id.replace("cochrane-", "")}: ${first.slice(0, 60)}${first.length > 60 ? "…" : ""}`;
+}
+
+function buildCases() {
+  $("cases").innerHTML = DATA.cases.map((c, k) => {
+    const i = DATA.examples.findIndex(e => e.id === c.id);
+    if (i < 0) return "";
+    return `<button type="button" class="case-btn ${TAGS[k] || ""}" data-i="${i}"><span class="num">Case ${k + 1}</span><span class="t">${esc(c.short || c.title)}</span><span class="topic">${esc(c.topic || "")}</span></button>`;
+  }).join("");
+}
+
+function renderTable() {
+  const el = $("results");
+  el.hidden = !state.table;
+  if (!state.table || !DATA.results) return;
+  const rows = DATA.results[state.tableSplit] || [];
+  const n = rows.length ? rows[0].n : 0;
+  const cell = v => (v === null || v === undefined ? "—" : Number(v).toFixed(1));
+  el.innerHTML = `<div class="head"><h2>Results over all ${n} ${state.tableSplit === "test" ? "test" : "validation"} abstracts (averages)</h2>
+    <div class="seg"><button type="button" data-split="test" class="${state.tableSplit === "test" ? "on" : ""}">Test set</button><button type="button" data-split="val" class="${state.tableSplit === "val" ? "on" : ""}">Validation set</button></div></div>
+    <table class="res"><thead><tr><th>System</th><th class="num">Grade level</th><th class="num">Words</th><th class="num">Digits per 100 words</th><th class="num">SARI</th><th class="num">BERTScore</th><th class="num">Sentences flagged</th></tr></thead><tbody>
+    ${rows.map(r => `<tr class="${r.key.startsWith("llm") ? "llm" : ""}"><td>${esc(r.name)}</td><td class="num">${cell(r.fkgl)}</td><td class="num">${r.words === null ? "—" : Math.round(r.words)}</td><td class="num">${cell(r.digits)}</td><td class="num">${cell(r.sari)}</td><td class="num">${cell(r.bertscore)}</td><td class="num">${r.flagged === null ? "—" : r.flagged + "%"}</td></tr>`).join("")}
+    </tbody></table>
+    <p class="defs"><b>Grade level:</b> Flesch–Kincaid, lower is easier. <b>SARI:</b> word by word, did the rewrite keep, add and delete the same words as the human summary? <b>BERTScore:</b> a language model matches each word to the closest-meaning word in the human summary (rescaled). <b>Sentences flagged:</b> share of sentences the checker marks as not supported by the abstract. The original abstract is not checked against itself.</p>`;
 }
 
 function buildPickers() {
   const featured = DATA.cases.map(c => DATA.examples.findIndex(e => e.id === c.id)).filter(i => i >= 0);
   const opts = [];
   if (featured.length) {
-    opts.push('<optgroup label="Featured cases">' + featured.map(i => `<option value="${i}">${esc(label(DATA.examples[i]))}</option>`).join("") + "</optgroup>");
+    opts.push('<optgroup label="★ Featured cases">' + featured.map(i => `<option value="${i}">${esc(label(DATA.examples[i], true))}</option>`).join("") + "</optgroup>");
   }
   for (const split of ["val", "test"]) {
     const idx = DATA.examples.map((e, i) => [e, i]).filter(([e]) => e.split === split);
@@ -188,6 +244,7 @@ function renderOutput(ex, sysKey, colIndex) {
 
 function render() {
   const ex = DATA.examples[state.i];
+  document.querySelectorAll(".case-btn").forEach(b => b.classList.toggle("on", +b.dataset.i === state.i));
   const caseInfo = DATA.cases.find(c => c.id === ex.id);
   $("caseNote").hidden = !caseInfo;
   if (caseInfo) $("caseNote").innerHTML = `<b>${esc(caseInfo.title)}.</b> ${esc(caseInfo.note)}`;
@@ -230,6 +287,9 @@ function bind() {
   $("sysB").addEventListener("change", e => { state.sysB = e.target.value; state.sel = null; render(); });
   $("compare").addEventListener("change", e => { state.compare = e.target.checked; $("sysBwrap").hidden = !state.compare; state.sel = null; render(); });
   $("showHuman").addEventListener("change", e => { state.human = e.target.checked; render(); });
+  $("showTable").addEventListener("change", e => { state.table = e.target.checked; renderTable(); if (state.table) $("results").scrollIntoView({ behavior: "smooth", block: "start" }); });
+  $("results").addEventListener("click", e => { const b = e.target.closest("[data-split]"); if (!b) return; state.tableSplit = b.dataset.split; renderTable(); });
+  $("cases").addEventListener("click", e => { const b = e.target.closest(".case-btn"); if (!b) return; state.i = +b.dataset.i; $("example").value = b.dataset.i; state.sel = null; applyCaseSystem(); render(); });
   const go = d => { const opts = [...$("example").options]; const pos = opts.findIndex(o => +o.value === state.i); const next = opts[(pos + d + opts.length) % opts.length]; state.i = +next.value; $("example").value = next.value; state.sel = null; applyCaseSystem(); render(); };
   $("prev").addEventListener("click", () => go(-1));
   $("next").addEventListener("click", () => go(1));
@@ -252,7 +312,7 @@ function about() {
 }
 
 fetch("data.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
-  DATA = d; buildPickers(); bind(); about(); applyCaseSystem(); render();
+  DATA = d; buildCases(); buildPickers(); bind(); about(); applyCaseSystem(); render(); renderTable();
 }).catch(err => { $("footer").textContent = "Could not load the demo data (data.json): " + err.message; });
 </script>
 </body>
